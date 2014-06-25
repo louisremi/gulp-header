@@ -5,6 +5,7 @@
 var header = require('../');
 var should = require('should');
 var gutil = require('gulp-util');
+var path = require('path');
 require('mocha');
 
 describe('gulp-header', function() {
@@ -61,6 +62,29 @@ describe('gulp-header', function() {
       stream.end();
     });
 
+    it('should generate a header from a function and prepend it', function(done) {
+      var stream = header(function() { return 'And then i said : '; });
+      stream.on('data', function (newFile) {
+        should.exist(newFile.contents);
+        newFile.contents.toString().should.equal('And then i said : Hello world');
+      });
+      stream.once('end', done);
+
+      stream.write(fakeFile);
+      stream.end();
+    });
+
+    it('should pass the file to the header function', function(done) {
+      var stream = header(function(file) { return 'And then ' + path.basename( file.path, '.js' ) + ' said : '; });
+      stream.on('data', function (newFile) {
+        should.exist(newFile.contents);
+        newFile.contents.toString().should.equal('And then file said : Hello world');
+      });
+      stream.once('end', done);
+
+      stream.write(fakeFile);
+      stream.end();
+    });
 
     it('should format the header', function(done) {
       var stream = header('And then <%= foo %> said : ', { foo : 'you' } );

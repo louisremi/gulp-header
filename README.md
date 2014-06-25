@@ -23,6 +23,12 @@ gulp.src('./foo/*.js')
   .pipe(header('Hello ${name}\n', { name : 'World'} ))
   .pipe(gulp.dest('./dist/')
 
+gulp.src('./foo/*.js')
+  .pipe(header(function(file) {
+    return 'Hello ' + file.path;
+  })
+  .pipe(gulp.dest('./dist/')
+
 
 //
 
@@ -69,6 +75,15 @@ Type: `Object`
 Default: `{}`  
 
 The data object used to populate the text.
+
+### header(headerCb)
+
+#### headerCb
+
+Type: `Function`  
+Default: `undefined`  
+
+The function that will return the header text. It receives one argument: the file object.
 
 ## License
 
